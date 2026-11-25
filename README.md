@@ -1,59 +1,78 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# 🍔 FoodHub
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+Platform pemesanan makanan online (food delivery marketplace) yang terinspirasi dari GoFood dan GrabFood. Dibangun dengan Laravel sebagai proyek mata kuliah **Pemrograman Web Lanjut**.
 
-## About Laravel
+> **Status:** sedang dikembangkan secara bertahap (stage by stage). Lihat bagian [Roadmap](#-roadmap).
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+## 📌 Tentang Proyek
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+FoodHub mempertemukan pelanggan dengan restoran. Pelanggan dapat menelusuri restoran dan menu, memasukkan makanan ke keranjang, lalu melakukan checkout. Pemilik restoran mengelola menu dan memproses pesanan, sedangkan admin memantau seluruh aktivitas aplikasi.
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+## 👥 Peran Pengguna
 
-## Learning Laravel
+| Peran                | Kemampuan utama                                                                                              |
+| -------------------- | ------------------------------------------------------------------------------------------------------------ |
+| **Guest**            | Melihat homepage, daftar restoran, kategori, menu, dan detail restoran; registrasi dan login                 |
+| **Customer**         | Keranjang belanja, checkout, riwayat dan detail pesanan, memantau status pesanan, kelola profil              |
+| **Restaurant Owner** | Dashboard sendiri, kelola restoran, kategori menu, makanan (harga dan ketersediaan), memproses pesanan masuk |
+| **Admin**            | Dashboard administrator, kelola pengguna, restoran, kategori, memantau seluruh transaksi                     |
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework. You can also check out [Laravel Learn](https://laravel.com/learn), where you will be guided through building a modern Laravel application.
+## 🛠️ Teknologi
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+- **Backend:** Laravel 12, PHP 8.3
+- **Database:** MySQL / MariaDB
+- **Frontend:** Blade Template Engine, Bootstrap 5, Bootstrap Icons, JavaScript
+- **Build tool:** Vite (npm)
+- **ORM & Otorisasi:** Eloquent ORM, Laravel Middleware
 
-## Laravel Sponsors
+## 🗄️ Rancangan Database
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+Tabel utama: `users`, `restaurants`, `categories`, `menus`, `carts`, `cart_items`, `orders`, `order_items`.
 
-### Premium Partners
+Catatan desain:
 
-- **[Vehikl](https://vehikl.com)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Redberry](https://redberry.international/laravel-development)**
-- **[Active Logic](https://activelogic.com)**
+- Menggunakan foreign key dan relasi Eloquent.
+- `order_items` menyimpan **harga saat pembelian**, sehingga riwayat pesanan tidak berubah ketika harga menu diperbarui.
+- Total harga dihitung ulang di server dari data database, bukan dari data yang dikirim browser.
 
-## Contributing
+## 🔒 Keamanan
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+- Password di-hash.
+- Validasi input dengan Laravel Validation.
+- Proteksi CSRF.
+- Pembatasan akses per peran menggunakan middleware.
+- Restaurant Owner hanya dapat mengelola restoran miliknya sendiri.
+- Customer hanya dapat melihat pesanannya sendiri.
+- Pembuatan pesanan memakai database transaction.
 
-## Code of Conduct
+## ⚙️ Persyaratan
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+- PHP 8.2 atau lebih baru
+- Composer
+- Node.js dan npm
+- MySQL atau MariaDB (contoh: XAMPP / Laragon)
 
-## Security Vulnerabilities
+## 🗺️ Roadmap
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+- [x] Stage 1 – Project Setup & Architecture
+- [ ] Stage 2 – Database Design & Migration
+- [ ] Stage 3 – Authentication & Authorization
+- [ ] Stage 4 – Public Website
+- [ ] Stage 5 – Restaurant Management
+- [ ] Stage 6 – Customer Features & Shopping Cart
+- [ ] Stage 7 – Checkout & Transaction
+- [ ] Stage 8 – Order Management
+- [ ] Stage 9 – Admin Dashboard
+- [ ] Stage 10 – UI/UX Enhancement
+- [ ] Stage 11 – Testing & Finalization
 
-## License
+## 👤 Pengembang
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+- Alphantius **Vincent** - 71230967
+- **Benyamin** Prasetya Putra Ramayana - 71230984
+- **Ivan** Roberto Halim - 71230986
+- **Edrian** Sepriadi Irawan - 71231011
+
+## 📄 Lisensi
+
+Proyek ini dibuat untuk keperluan tugas dan pembelajaran.

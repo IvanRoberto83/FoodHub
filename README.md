@@ -56,7 +56,7 @@ Catatan desain:
 
 - [x] Stage 1 – Project Setup & Architecture
 - [x] Stage 2 – Database Design & Migration
-- [ ] Stage 3 – Authentication & Authorization
+- [x] Stage 3 – Authentication & Authorization
 - [ ] Stage 4 – Public Website
 - [ ] Stage 5 – Restaurant Management
 - [ ] Stage 6 – Customer Features & Shopping Cart

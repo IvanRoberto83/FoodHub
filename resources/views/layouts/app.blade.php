@@ -30,11 +30,39 @@
                     <li class="nav-item"><a class="nav-link" href="#">Kategori</a></li>
                 </ul>
 
-                {{-- Tombol login/daftar diaktifkan di Stage 3 --}}
-                <div class="d-flex gap-2">
-                    <a href="#" class="btn btn-outline-primary">Masuk</a>
-                    <a href="#" class="btn btn-primary">Daftar</a>
-                </div>
+                {{-- @guest = tampil jika belum login, @auth = tampil jika sudah login --}}
+                @guest
+                    <div class="d-flex gap-2">
+                        <a href="{{ route('login') }}" class="btn btn-outline-primary">Masuk</a>
+                        <a href="{{ route('register') }}" class="btn btn-primary">Daftar</a>
+                    </div>
+                @endguest
+
+                @auth
+                    <div class="dropdown">
+                        <button class="btn btn-light dropdown-toggle" data-bs-toggle="dropdown">
+                            <i class="bi bi-person-circle text-primary"></i> {{ Auth::user()->name }}
+                        </button>
+                        <ul class="dropdown-menu dropdown-menu-end">
+                            @if (Auth::user()->isAdmin())
+                                <li><a class="dropdown-item" href="{{ route('admin.dashboard') }}">Dashboard Admin</a></li>
+                            @elseif (Auth::user()->isOwner())
+                                <li><a class="dropdown-item" href="{{ route('owner.dashboard') }}">Dashboard Restoran</a></li>
+                            @endif
+
+                            <li><hr class="dropdown-divider"></li>
+                            <li>
+                                {{-- Logout harus POST + CSRF, bukan link biasa --}}
+                                <form action="{{ route('logout') }}" method="POST">
+                                    @csrf
+                                    <button type="submit" class="dropdown-item text-danger">
+                                        <i class="bi bi-box-arrow-right"></i> Keluar
+                                    </button>
+                                </form>
+                            </li>
+                        </ul>
+                    </div>
+                @endauth
             </div>
         </div>
     </nav>

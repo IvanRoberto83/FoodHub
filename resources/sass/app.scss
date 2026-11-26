@@ -1,0 +1,19 @@
+$primary: #ff6b00;
+$body-bg: #f8f9fa;
+$border-radius: 0.75rem;
+
+@import 'bootstrap/scss/bootstrap';
+
+.hero-foodhub {
+    background: linear-gradient(135deg, #ff6b00, #ff9f45);
+    color: #fff;
+}
+
+.card-hover {
+    transition: transform .2s, box-shadow .2s;
+}
+
+.card-hover:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 .5rem 1.5rem rgba(0, 0, 0, .12);
+}

@@ -55,7 +55,7 @@ Catatan desain:
 ## 🗺️ Roadmap
 
 - [x] Stage 1 – Project Setup & Architecture
-- [ ] Stage 2 – Database Design & Migration
+- [x] Stage 2 – Database Design & Migration
 - [ ] Stage 3 – Authentication & Authorization
 - [ ] Stage 4 – Public Website
 - [ ] Stage 5 – Restaurant Management

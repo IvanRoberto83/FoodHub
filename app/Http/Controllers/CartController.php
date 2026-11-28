@@ -40,6 +40,10 @@ class CartController extends Controller
      */
     public function add(Request $request, Menu $menu)
     {
+        if ($menu->restaurant && ! $menu->restaurant->is_open) {
+            return back()->with('error', 'Maaf, restoran "' . $menu->restaurant->name . '" sedang tutup sementara.');
+        }
+
         if (! $menu->is_available || $menu->stock < 1) {
             return back()->with('error', 'Maaf, menu sedang habis atau tidak tersedia.');
         }
@@ -182,6 +186,11 @@ class CartController extends Controller
         if (! $cart || $cart->items->isEmpty()) {
             return redirect()->route('menus.index')
                 ->with('error', 'Keranjang Anda kosong.');
+        }
+
+        if ($cart->restaurant && ! $cart->restaurant->is_open) {
+            return redirect()->route('cart.index')
+                ->with('error', 'Maaf, restoran "' . $cart->restaurant->name . '" sedang tutup sementara sehingga pesanan belum dapat diproses.');
         }
 
         return DB::transaction(function () use ($validated, $cart) {

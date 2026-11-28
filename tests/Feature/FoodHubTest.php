@@ -4,6 +4,8 @@ namespace Tests\Feature;
 
 use App\Models\Category;
 use App\Models\Menu;
+use App\Models\Order;
+use App\Models\OrderItem;
 use App\Models\Restaurant;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -17,10 +19,14 @@ class FoodHubTest extends TestCase
     use RefreshDatabase;
 
     protected User $admin;
+    protected User $owner;
+    protected User $otherOwner;
     protected User $customer;
     protected Restaurant $restaurant;
+    protected Restaurant $otherRestaurant;
     protected Category $category;
     protected Menu $menu;
+    protected Menu $otherMenu;
 
     protected function setUp(): void
     {
@@ -43,13 +49,24 @@ class FoodHubTest extends TestCase
         ]);
 
         // 3. Restoran & Kategori & Menu
-        $owner = User::factory()->create(['role' => 'owner']);
+        $this->owner = User::factory()->create(['role' => 'owner']);
         $this->restaurant = Restaurant::create([
-            'user_id' => $owner->id,
+            'user_id' => $this->owner->id,
             'name'    => 'Resto Uji Coba',
             'slug'    => 'resto-uji-coba',
             'address' => 'Jl. Kaliurang No. 1',
             'phone'   => '08123456789',
+            'is_open' => true,
+        ]);
+
+        $this->otherOwner = User::factory()->create(['role' => 'owner']);
+        $this->otherRestaurant = Restaurant::create([
+            'user_id' => $this->otherOwner->id,
+            'name'    => 'Resto Tetangga',
+            'slug'    => 'resto-tetangga',
+            'address' => 'Jl. Sudirman No. 99',
+            'phone'   => '08987654321',
+            'is_open' => true,
         ]);
 
         $this->category = Category::create([
@@ -66,6 +83,16 @@ class FoodHubTest extends TestCase
             'is_available'  => true,
             'image'         => 'https://picsum.photos/300/300',
         ]);
+
+        $this->otherMenu = Menu::create([
+            'restaurant_id' => $this->otherRestaurant->id,
+            'category_id'   => $this->category->id,
+            'name'          => 'Ayam Bakar Tetangga',
+            'price'         => 30000,
+            'stock'         => 15,
+            'is_available'  => true,
+            'image'         => 'https://picsum.photos/300/300',
+        ]);
     }
 
     /**
@@ -74,6 +101,8 @@ class FoodHubTest extends TestCase
     public function test_public_pages_can_be_accessed(): void
     {
         $this->get('/')->assertStatus(200);
+        $this->get('/restaurants')->assertStatus(200)->assertSee('Resto Uji Coba');
+        $this->get("/restaurants/{$this->restaurant->slug}")->assertStatus(200)->assertSee('Nasi Goreng Spesial');
         $this->get('/menus')->assertStatus(200);
         $this->get("/menus/{$this->menu->id}")->assertStatus(200);
     }
@@ -310,5 +339,236 @@ class FoodHubTest extends TestCase
             ->assertRedirect(route('admin.menus.index'));
 
         Storage::disk('public')->assertExists('menus/external.jpg');
+    }
+
+    public function test_customer_cannot_access_owner_dashboard(): void
+    {
+        $this->actingAs($this->customer)
+            ->get('/owner/dashboard')
+            ->assertStatus(403);
+    }
+
+    public function test_owner_can_access_dashboard_and_update_restaurant_profile(): void
+    {
+        $this->actingAs($this->owner)
+            ->get('/owner/dashboard')
+            ->assertStatus(200)
+            ->assertSee('Resto Uji Coba');
+
+        $this->actingAs($this->owner)
+            ->put('/owner/restaurant', [
+                'name'        => 'Resto Uji Coba Baru',
+                'description' => 'Masakan Nusantara lezat.',
+                'address'     => 'Jl. Malioboro No. 88',
+                'phone'       => '081122334455',
+                'is_open'     => '0',
+            ])
+            ->assertRedirect('/owner/restaurant');
+
+        $this->assertDatabaseHas('restaurants', [
+            'id'      => $this->restaurant->id,
+            'name'    => 'Resto Uji Coba Baru',
+            'address' => 'Jl. Malioboro No. 88',
+            'is_open' => false,
+        ]);
+    }
+
+    public function test_customer_cannot_order_from_closed_restaurant(): void
+    {
+        $this->actingAs($this->owner)
+            ->patch('/owner/restaurant/toggle-status')
+            ->assertRedirect();
+
+        $this->assertFalse($this->restaurant->fresh()->is_open);
+
+        $this->actingAs($this->customer)
+            ->post("/cart/add/{$this->menu->id}", ['quantity' => 1])
+            ->assertSessionHas('error');
+
+        $this->assertDatabaseMissing('cart_items', [
+            'menu_id' => $this->menu->id,
+        ]);
+    }
+
+    public function test_owner_can_manage_own_menus_and_blocked_from_other_restaurant_menus(): void
+    {
+        $this->actingAs($this->owner)
+            ->post('/owner/menus', [
+                'category_id'  => $this->category->id,
+                'name'         => 'Mie Goreng Jawa',
+                'description'  => 'Mie goreng bumbu rempah',
+                'price'        => 22000,
+                'stock'        => 25,
+                'is_available' => '1',
+            ])
+            ->assertRedirect('/owner/menus');
+
+        $newMenu = Menu::where('name', 'Mie Goreng Jawa')->firstOrFail();
+        $this->assertEquals($this->restaurant->id, $newMenu->restaurant_id);
+
+        $this->actingAs($this->owner)
+            ->put("/owner/menus/{$newMenu->id}", [
+                'category_id'  => $this->category->id,
+                'name'         => 'Mie Goreng Jawa Spesial',
+                'description'  => 'Mie goreng spesial telur bebek',
+                'price'        => 26000,
+                'stock'        => 30,
+                'is_available' => '1',
+            ])
+            ->assertRedirect('/owner/menus');
+
+        $this->assertDatabaseHas('menus', [
+            'id'    => $newMenu->id,
+            'name'  => 'Mie Goreng Jawa Spesial',
+            'price' => 26000,
+        ]);
+
+        // Coba edit/update/hapus menu milik Owner 2 -> wajib 403 Forbidden
+        $this->actingAs($this->owner)
+            ->get("/owner/menus/{$this->otherMenu->id}/edit")
+            ->assertStatus(403);
+
+        $this->actingAs($this->owner)
+            ->put("/owner/menus/{$this->otherMenu->id}", [
+                'category_id' => $this->category->id,
+                'name'        => 'Bajak Menu Orang',
+                'price'       => 1000,
+                'stock'       => 1,
+            ])
+            ->assertStatus(403);
+
+        $this->actingAs($this->owner)
+            ->delete("/owner/menus/{$this->otherMenu->id}")
+            ->assertStatus(403);
+
+        $this->actingAs($this->owner)
+            ->delete("/owner/menus/{$newMenu->id}")
+            ->assertRedirect('/owner/menus');
+
+        $this->assertDatabaseMissing('menus', ['id' => $newMenu->id]);
+    }
+
+    public function test_owner_can_replace_and_remove_menu_and_restaurant_images(): void
+    {
+        Storage::fake('public');
+        Storage::disk('public')->put('menus/old-owner-menu.jpg', 'old owner menu');
+        $this->menu->update(['image' => '/storage/menus/old-owner-menu.jpg']);
+
+        // 1x1 PNG valid agar tetap lulus meskipun ekstensi GD di XAMPP belum diaktifkan
+        $tinyPng = base64_decode('iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg==');
+
+        // Ganti foto menu oleh Owner
+        $this->actingAs($this->owner)
+            ->put(route('owner.menus.update', $this->menu), [
+                'category_id'  => $this->category->id,
+                'name'         => $this->menu->name,
+                'price'        => $this->menu->price,
+                'stock'        => $this->menu->stock,
+                'image'        => UploadedFile::fake()->createWithContent('new-owner-menu.png', $tinyPng),
+                'is_available' => '1',
+            ])
+            ->assertRedirect(route('owner.menus.index'));
+
+        $this->menu->refresh();
+        $storedPath = substr(parse_url($this->menu->image, PHP_URL_PATH), strlen('/storage/'));
+        Storage::disk('public')->assertExists($storedPath);
+        Storage::disk('public')->assertMissing('menus/old-owner-menu.jpg');
+
+        // Hapus foto menu oleh Owner (kembali ke default)
+        $this->actingAs($this->owner)
+            ->put(route('owner.menus.update', $this->menu), [
+                'category_id'  => $this->category->id,
+                'name'         => $this->menu->name,
+                'price'        => $this->menu->price,
+                'stock'        => $this->menu->stock,
+                'remove_image' => '1',
+                'is_available' => '1',
+            ])
+            ->assertRedirect(route('owner.menus.index'));
+
+        $this->menu->refresh();
+        $this->assertSame(
+            'https://picsum.photos/seed/' . Str::slug($this->menu->name) . '/600/400',
+            $this->menu->image
+        );
+        Storage::disk('public')->assertMissing($storedPath);
+    }
+
+    public function test_owner_can_process_incoming_orders_and_cancel_restores_stock(): void
+    {
+        $order = Order::create([
+            'order_code'       => 'ORD-TEST-001',
+            'user_id'          => $this->customer->id,
+            'restaurant_id'    => $this->restaurant->id,
+            'status'           => 'pending',
+            'total_price'      => 50000,
+            'delivery_address' => 'Jl. Kaliurang KM 5',
+            'payment_method'   => 'cod',
+        ]);
+
+        OrderItem::create([
+            'order_id'  => $order->id,
+            'menu_id'   => $this->menu->id,
+            'menu_name' => $this->menu->name,
+            'price'     => 25000,
+            'quantity'  => 2,
+            'subtotal'  => 50000,
+        ]);
+
+        $this->menu->decrement('stock', 2);
+
+        $this->actingAs($this->owner)
+            ->patch("/owner/orders/{$order->id}/status", ['status' => 'processing'])
+            ->assertRedirect();
+
+        $this->assertEquals('processing', $order->fresh()->status);
+
+        $this->actingAs($this->owner)
+            ->patch("/owner/orders/{$order->id}/status", ['status' => 'completed'])
+            ->assertRedirect();
+
+        $this->assertEquals('completed', $order->fresh()->status);
+
+        $orderToCancel = Order::create([
+            'order_code'       => 'ORD-TEST-002',
+            'user_id'          => $this->customer->id,
+            'restaurant_id'    => $this->restaurant->id,
+            'status'           => 'pending',
+            'total_price'      => 75000,
+            'delivery_address' => 'Jl. Kaliurang KM 7',
+            'payment_method'   => 'qris',
+        ]);
+
+        OrderItem::create([
+            'order_id'  => $orderToCancel->id,
+            'menu_id'   => $this->menu->id,
+            'menu_name' => $this->menu->name,
+            'price'     => 25000,
+            'quantity'  => 3,
+            'subtotal'  => 75000,
+        ]);
+
+        $this->menu->decrement('stock', 3);
+
+        $this->actingAs($this->owner)
+            ->patch("/owner/orders/{$orderToCancel->id}/status", ['status' => 'cancelled'])
+            ->assertRedirect();
+
+        $this->assertEquals('cancelled', $orderToCancel->fresh()->status);
+        $this->assertEquals(18, $this->menu->fresh()->stock);
+
+        $otherOrder = Order::create([
+            'order_code'       => 'ORD-OTHER-001',
+            'user_id'          => $this->customer->id,
+            'restaurant_id'    => $this->otherRestaurant->id,
+            'status'           => 'pending',
+            'total_price'      => 30000,
+            'delivery_address' => 'Jl. Sudirman No. 1',
+            'payment_method'   => 'cod',
+        ]);
+
+        $this->actingAs($this->owner)
+            ->patch("/owner/orders/{$otherOrder->id}/status", ['status' => 'processing'])
+            ->assertStatus(403);
     }
 }

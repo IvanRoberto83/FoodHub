@@ -14,6 +14,11 @@ class OrderController extends Controller
 {
     public function create(Menu $menu)
     {
+        if ($menu->restaurant && ! $menu->restaurant->is_open) {
+            return redirect()->route('menus.show', $menu)
+                ->with('error', 'Maaf, restoran "' . $menu->restaurant->name . '" sedang tutup sementara.');
+        }
+
         if (! $menu->is_available || $menu->stock < 1) {
             return redirect()->route('menus.show', $menu)
                 ->with('error', 'Maaf, menu ini sedang habis atau tidak tersedia.');
@@ -40,7 +45,12 @@ class OrderController extends Controller
 
         return DB::transaction(function () use ($validated, $menu) {
             // Lock row menu for update
-            $freshMenu = Menu::where('id', $menu->id)->lockForUpdate()->first();
+            $freshMenu = Menu::with('restaurant')->where('id', $menu->id)->lockForUpdate()->first();
+
+            if ($freshMenu->restaurant && ! $freshMenu->restaurant->is_open) {
+                return redirect()->route('menus.show', $menu)
+                    ->with('error', 'Maaf, restoran "' . $freshMenu->restaurant->name . '" sedang tutup sementara.');
+            }
 
             if (! $freshMenu->is_available || $freshMenu->stock < $validated['quantity']) {
                 return redirect()->route('menus.show', $menu)

@@ -307,6 +307,8 @@ body {
     contain-intrinsic-size: 400px;
 }
 
+@import 'marketplace-ui';
+
 // Admin layout
 .admin-shell {
     min-height: 100vh;

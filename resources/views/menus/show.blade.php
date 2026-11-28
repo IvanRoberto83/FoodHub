@@ -35,9 +35,22 @@
 
         {{-- Detail Informasi Menu & Aksi Pemesanan --}}
         <div class="col-12 col-md-6 col-lg-7">
-            <div class="d-flex align-items-center gap-2 mb-2 text-muted small">
+            <div class="d-flex flex-wrap align-items-center gap-2 mb-2 text-muted small">
                 <i class="bi bi-shop text-primary"></i>
-                <span class="fw-semibold text-dark">{{ $menu->restaurant->name ?? 'FoodHub Kitchen' }}</span>
+                @if($menu->restaurant)
+                    <a href="{{ route('restaurants.show', $menu->restaurant->slug) }}" class="fw-semibold text-dark text-decoration-none">
+                        {{ $menu->restaurant->name }}
+                    </a>
+                @else
+                    <span class="fw-semibold text-dark">FoodHub Kitchen</span>
+                @endif
+                @if($menu->restaurant)
+                    @if($menu->restaurant->is_open)
+                        <span class="badge bg-success bg-opacity-10 text-success rounded-pill px-2 py-1">Buka</span>
+                    @else
+                        <span class="badge bg-danger bg-opacity-10 text-danger rounded-pill px-2 py-1">Sedang Tutup</span>
+                    @endif
+                @endif
                 @if($menu->restaurant?->address)
                     <span>• {{ $menu->restaurant->address }}</span>
                 @endif
@@ -82,7 +95,13 @@
             <hr class="my-4 text-muted opacity-25">
 
             {{-- Tombol Aksi Keranjang & Pesan Langsung --}}
-            @if($menu->stock > 0 && $menu->is_available)
+            @if($menu->restaurant && !$menu->restaurant->is_open)
+                <div class="mb-3">
+                    <button class="btn btn-secondary btn-pill px-4" disabled>
+                        <i class="bi bi-moon-stars me-1"></i> Restoran Sedang Tutup
+                    </button>
+                </div>
+            @elseif($menu->stock > 0 && $menu->is_available)
                 <form action="{{ route('cart.add', $menu) }}" method="POST" class="mb-3">
                     @csrf
                     <div class="d-flex flex-wrap align-items-center gap-3">

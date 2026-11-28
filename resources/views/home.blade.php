@@ -39,6 +39,9 @@
                         <a href="{{ route('menus.index') }}" class="btn btn-primary btn-pill shadow-sm d-inline-flex align-items-center gap-2">
                             <i class="bi bi-bag-check-fill"></i> Pesan Sekarang
                         </a>
+                        <a href="{{ route('restaurants.index') }}" class="btn btn-outline-primary btn-pill d-inline-flex align-items-center gap-2">
+                            <i class="bi bi-shop"></i> Lihat Restoran
+                        </a>
                     </div>
                 </div>
 
@@ -238,6 +241,58 @@
             </div>
         </div>
     </section>
+
+    {{-- ================= FEATURED RESTAURANTS SECTION ================= --}}
+    @if(isset($restaurants) && $restaurants->isNotEmpty())
+    <section class="py-5 bg-light border-top border-bottom border-light">
+        <div class="container py-2">
+            <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-end mb-4">
+                <div>
+                    <span class="text-primary text-uppercase fw-bold small tracking-wider">MITRA RESTORAN</span>
+                    <h2 class="fw-bold text-dark mt-1 mb-0">Restoran Populer di Sekitarmu</h2>
+                </div>
+                <a href="{{ route('restaurants.index') }}" class="btn btn-outline-primary btn-sm rounded-pill px-3 mt-3 mt-md-0">
+                    Semua Restoran <i class="bi bi-arrow-right ms-1"></i>
+                </a>
+            </div>
+
+            <div class="row g-4">
+                @foreach($restaurants as $resto)
+                    <div class="col-12 col-sm-6 col-lg-3">
+                        <div class="resto-card h-100 d-flex flex-column">
+                            <div class="resto-card-img-wrap" style="height: 155px;">
+                                <a href="{{ route('restaurants.show', $resto->slug) }}">
+                                    <img src="{{ $resto->image ?? 'https://picsum.photos/seed/resto-' . $resto->slug . '/600/400' }}" alt="{{ $resto->name }}">
+                                </a>
+                                @if($resto->is_open)
+                                    <span class="badge bg-success position-absolute top-0 start-0 m-2 rounded-pill px-2 py-1 small">Buka</span>
+                                @else
+                                    <span class="badge bg-danger position-absolute top-0 start-0 m-2 rounded-pill px-2 py-1 small">Tutup</span>
+                                @endif
+                            </div>
+                            <div class="p-3 d-flex flex-column flex-grow-1">
+                                <h6 class="fw-bold text-dark mb-1 text-truncate">
+                                    <a href="{{ route('restaurants.show', $resto->slug) }}" class="text-dark text-decoration-none">
+                                        {{ $resto->name }}
+                                    </a>
+                                </h6>
+                                <small class="text-muted text-truncate mb-2">
+                                    <i class="bi bi-geo-alt text-primary"></i> {{ $resto->address }}
+                                </small>
+                                <div class="mt-auto pt-2 border-top d-flex justify-content-between align-items-center small">
+                                    <span class="text-muted">{{ $resto->menus_count }} Menu</span>
+                                    <a href="{{ route('restaurants.show', $resto->slug) }}" class="text-primary fw-semibold text-decoration-none">
+                                        Kunjungi <i class="bi bi-chevron-right"></i>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                @endforeach
+            </div>
+        </div>
+    </section>
+    @endif
 
     {{-- ================= DELIVERY PROMO SECTION ================= --}}
     <section id="delivery" class="py-5 bg-soft-green">

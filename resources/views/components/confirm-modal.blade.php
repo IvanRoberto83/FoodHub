@@ -46,7 +46,13 @@
                 </div>
 
                 <div class="modal-body py-4 px-4">
-                    <p class="text-secondary mb-0">{{ $message }}</p>
+                    <p class="text-secondary mb-0">
+                            @if ($slot->isNotEmpty())
+                                {{ $slot }}
+                            @else
+                                {{ $message }}
+                            @endif
+                    </p>
                 </div>
 
                 <div class="modal-footer border-0 pt-0 pb-4 px-4 d-flex justify-content-end gap-2">

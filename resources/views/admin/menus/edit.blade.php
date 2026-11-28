@@ -97,6 +97,10 @@
                         @error('image')
                             <div class="invalid-feedback">{{ $message }}</div>
                         @enderror
+                        <div class="form-check mt-2">
+                            <input type="checkbox" name="remove_image" value="1" class="form-check-input" id="removeMenuImage" {{ old('remove_image') ? 'checked' : '' }}>
+                            <label class="form-check-label small text-muted" for="removeMenuImage">Hapus foto saat ini dan gunakan foto default.</label>
+                        </div>
                     </div>
 
                     {{-- Status Ketersediaan --}}

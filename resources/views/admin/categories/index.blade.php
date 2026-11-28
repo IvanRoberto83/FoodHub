@@ -77,7 +77,7 @@
                     <div class="modal fade" id="modalEditCategory{{ $cat->id }}" tabindex="-1" aria-hidden="true">
                         <div class="modal-dialog modal-dialog-centered">
                             <div class="modal-content border-0 shadow rounded-4">
-                                <form action="{{ route('admin.categories.update', $cat) }}" method="POST">
+                                <form action="{{ route('admin.categories.update', $cat) }}" method="POST" enctype="multipart/form-data">
                                     @csrf
                                     @method('PUT')
                                     <div class="modal-header border-0 pb-0">
@@ -100,6 +100,11 @@
                                             @error('image')
                                                 <div class="invalid-feedback">{{ $message }}</div>
                                             @enderror
+                                            <label class="form-label fw-semibold small text-muted d-block mt-1">Hapus Foto</label>
+                                            <div class="form-check">
+                                                <input type="checkbox" name="remove_image" value="1" class="form-check-input" id="removeCategoryImage{{ $cat->id }}">
+                                                <label class="form-check-label small" for="removeCategoryImage{{ $cat->id }}">Hapus foto kategori saat ini.</label>
+                                            </div>
                                         </div>
                                     </div>
                                     <div class="modal-footer border-0 pt-0">
@@ -132,7 +137,7 @@
 <div class="modal fade" id="modalCreateCategory" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content border-0 shadow rounded-4">
-            <form action="{{ route('admin.categories.store') }}" method="POST">
+            <form action="{{ route('admin.categories.store') }}" method="POST" enctype="multipart/form-data">
                 @csrf
                 <div class="modal-header border-0 pb-0">
                     <h5 class="modal-title fw-bold">Tambah Kategori Baru</h5>

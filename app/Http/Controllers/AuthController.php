@@ -61,10 +61,11 @@ class AuthController extends Controller
             'name'     => ['required', 'string', 'max:255'],
             'email'    => ['required', 'email', 'max:255', 'unique:users,email'],
             'phone'    => ['nullable', 'string', 'max:20'],
-            
-            'role'     => ['required', Rule::in(['customer', 'owner'])],
             'password' => ['required', 'min:8', 'confirmed'],
         ], $this->messages, $this->attributes);
+
+        // Akun pendaftar publik otomatis diset sebagai customer
+        $data['role'] = 'customer';
 
         $user = User::create($data);
 

@@ -57,13 +57,13 @@ Catatan desain:
 - [x] Stage 1 – Project Setup & Architecture
 - [x] Stage 2 – Database Design & Migration
 - [x] Stage 3 – Authentication & Authorization
-- [ ] Stage 4 – Public Website
-- [ ] Stage 5 – Restaurant Management
-- [ ] Stage 6 – Customer Features & Shopping Cart
-- [ ] Stage 7 – Checkout & Transaction
-- [ ] Stage 8 – Order Management
-- [ ] Stage 9 – Admin Dashboard
-- [ ] Stage 10 – UI/UX Enhancement
+- [x] Stage 4 – Public Website
+- [ ] Stage 5 – Restaurant Management (Owner Area)
+- [x] Stage 6 – Customer Features & Shopping Cart
+- [x] Stage 7 – Checkout & Transaction
+- [x] Stage 8 – Order Management (Status & Cancel)
+- [x] Stage 9 – Admin Dashboard (Categories, Menus, & Transactions)
+- [x] Stage 10 – UI/UX Enhancement (Green Fresh Style)
 - [ ] Stage 11 – Testing & Finalization
 
 ## 👤 Pengembang

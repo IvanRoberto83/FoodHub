@@ -8,6 +8,11 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CartController;
 use App\Http\Controllers\MenuController;
 use App\Http\Controllers\OrderController;
+use App\Http\Controllers\Owner\DashboardController as OwnerDashboardController;
+use App\Http\Controllers\Owner\MenuController as OwnerMenuController;
+use App\Http\Controllers\Owner\OrderController as OwnerOrderController;
+use App\Http\Controllers\Owner\RestaurantController as OwnerRestaurantController;
+use App\Http\Controllers\RestaurantController;
 use Illuminate\Support\Facades\Route;
 
 // ==========================================
@@ -20,13 +25,20 @@ Route::get('/', function () {
             ->where('is_available', true)
             ->take(6)
             ->get();
+        $restaurants = \App\Models\Restaurant::withCount([
+            'menus' => fn ($q) => $q->where('is_available', true)->where('stock', '>', 0),
+        ])->orderByDesc('is_open')->take(4)->get();
     } catch (\Throwable $e) {
         $categories = collect();
         $menus = collect();
+        $restaurants = collect();
     }
 
-    return view('home', compact('categories', 'menus'));
+    return view('home', compact('categories', 'menus', 'restaurants'));
 })->name('home');
+
+Route::get('/restaurants', [RestaurantController::class, 'index'])->name('restaurants.index');
+Route::get('/restaurants/{restaurant:slug}', [RestaurantController::class, 'show'])->name('restaurants.show');
 
 Route::get('/menus', [MenuController::class, 'index'])->name('menus.index');
 Route::get('/menus/{menu}', [MenuController::class, 'show'])->name('menus.show');
@@ -97,7 +109,18 @@ Route::middleware(['auth', 'role:owner'])
     ->prefix('owner')
     ->name('owner.')
     ->group(function () {
-        Route::get('/dashboard', function () {
-            return view('owner.dashboard');
-        })->name('dashboard');
+        Route::get('/dashboard', [OwnerDashboardController::class, 'index'])->name('dashboard');
+
+        // Informasi & Status Operasional Restoran
+        Route::get('/restaurant', [OwnerRestaurantController::class, 'edit'])->name('restaurant.edit');
+        Route::put('/restaurant', [OwnerRestaurantController::class, 'update'])->name('restaurant.update');
+        Route::patch('/restaurant/toggle-status', [OwnerRestaurantController::class, 'toggleStatus'])->name('restaurant.toggle');
+
+        // Manajemen Menu Milik Restoran Sendiri
+        Route::patch('/menus/{menu}/toggle', [OwnerMenuController::class, 'toggleAvailability'])->name('menus.toggle');
+        Route::resource('menus', OwnerMenuController::class)->except(['show']);
+
+        // Proses Pesanan Masuk Restoran
+        Route::get('/orders', [OwnerOrderController::class, 'index'])->name('orders.index');
+        Route::patch('/orders/{order}/status', [OwnerOrderController::class, 'updateStatus'])->name('orders.status');
     });

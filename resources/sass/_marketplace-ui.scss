@@ -1,0 +1,274 @@
+// ==========================================================================
+// Modern FoodHub Marketplace Header & Restaurant UI
+// ==========================================================================
+
+.fh-header-wrapper {
+    position: sticky;
+    top: 0;
+    z-index: 1030;
+}
+
+.fh-topbar {
+    background: linear-gradient(90deg, #047857 0%, #05a86a 55%, #10b981 100%);
+    color: #ffffff;
+    font-size: 0.78rem;
+    padding: 0.4rem 0;
+}
+
+.fh-topbar a {
+    color: #ffffff;
+    text-decoration: none;
+}
+
+.fh-topbar-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    padding: 0.15rem 0.65rem;
+    border-radius: 50rem;
+    background: rgba(255, 255, 255, 0.18);
+    font-weight: 600;
+    font-size: 0.73rem;
+    transition: background-color 0.15s ease;
+}
+
+.fh-topbar-pill:hover {
+    background: rgba(255, 255, 255, 0.28);
+    color: #ffffff;
+}
+
+.fh-navbar {
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border-bottom: 1px solid #e6f0eb;
+    box-shadow: 0 6px 22px rgba(15, 23, 42, 0.04);
+    padding: 0.65rem 0;
+}
+
+.fh-brand {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.65rem;
+    text-decoration: none;
+    color: #192024;
+}
+
+.fh-brand:hover {
+    color: #192024;
+}
+
+.fh-brand-icon {
+    width: 40px;
+    height: 40px;
+    border-radius: 12px;
+    background: linear-gradient(135deg, #05a86a 0%, #10b981 100%);
+    color: #ffffff;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.2rem;
+    box-shadow: 0 6px 14px rgba(5, 168, 106, 0.25);
+}
+
+.fh-brand-text {
+    font-weight: 800;
+    font-size: 1.3rem;
+    letter-spacing: -0.03em;
+    line-height: 1;
+}
+
+.fh-nav-pills {
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+}
+
+.fh-nav-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45rem;
+    padding: 0.5rem 0.9rem !important;
+    border-radius: 50rem;
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: #475569 !important;
+    text-decoration: none;
+    transition: background-color 0.15s ease, color 0.15s ease;
+    white-space: nowrap;
+}
+
+.fh-nav-link i {
+    font-size: 0.98rem;
+    color: #94a3b8;
+    transition: color 0.15s ease;
+}
+
+.fh-nav-link:hover {
+    background: #f2fbf6;
+    color: $primary !important;
+}
+
+.fh-nav-link:hover i {
+    color: $primary;
+}
+
+.fh-nav-link.active {
+    background: #eaf7ef;
+    color: $primary !important;
+    font-weight: 700;
+}
+
+.fh-nav-link.active i {
+    color: $primary;
+}
+
+// Header Quick Search Pill
+.fh-header-search {
+    position: relative;
+    min-width: 210px;
+    max-width: 260px;
+    width: 100%;
+}
+
+.fh-header-search .form-control {
+    background: #f3f7f5;
+    border: 1px solid #e2ebe6;
+    border-radius: 50rem;
+    padding: 0.46rem 0.9rem 0.46rem 2.25rem;
+    font-size: 0.86rem;
+    color: #1e293b;
+    transition: background-color 0.15s ease, border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.fh-header-search .form-control:focus {
+    background: #ffffff;
+    border-color: $primary;
+    box-shadow: 0 0 0 3px rgba(5, 168, 106, 0.12);
+}
+
+.fh-header-search .search-icon {
+    position: absolute;
+    left: 0.85rem;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #64748b;
+    font-size: 0.88rem;
+    pointer-events: none;
+}
+
+// Cart & User Action Buttons
+.fh-cart-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45rem;
+    padding: 0.42rem 0.85rem;
+    border-radius: 50rem;
+    background: #f2fbf6;
+    border: 1px solid #ccebd9;
+    color: #192024;
+    font-weight: 600;
+    font-size: 0.88rem;
+    text-decoration: none;
+    position: relative;
+    transition: background-color 0.15s ease, border-color 0.15s ease, transform 0.15s ease;
+}
+
+.fh-cart-btn:hover {
+    background: #e3f7ec;
+    border-color: $primary;
+    color: $primary;
+    transform: translateY(-1px);
+}
+
+.fh-user-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.32rem 0.75rem 0.32rem 0.35rem;
+    border-radius: 50rem;
+    background: #ffffff;
+    border: 1px solid #e2ebe6;
+    color: #1e293b;
+    font-weight: 600;
+    font-size: 0.88rem;
+    transition: border-color 0.15s ease, background-color 0.15s ease;
+}
+
+.fh-user-btn:hover,
+.fh-user-btn:focus {
+    background: #f8fcf9;
+    border-color: #b8e3cc;
+    color: #192024;
+}
+
+.fh-user-avatar {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #05a86a 0%, #10b981 100%);
+    color: #ffffff;
+    font-weight: 700;
+    font-size: 0.8rem;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    text-transform: uppercase;
+}
+
+// Restaurant Marketplace Cards
+.resto-card {
+    border-radius: 1.25rem;
+    border: 1px solid #e8efeb;
+    background: #ffffff;
+    overflow: hidden;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.resto-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 14px 28px rgba(15, 23, 42, 0.07);
+}
+
+.resto-card-img-wrap {
+    position: relative;
+    height: 185px;
+    overflow: hidden;
+    background: #f1f5f9;
+}
+
+.resto-card-img-wrap img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.3s ease;
+}
+
+.resto-card:hover .resto-card-img-wrap img {
+    transform: scale(1.04);
+}
+
+.resto-hero-banner {
+    border-radius: 1.5rem;
+    overflow: hidden;
+    background: #ffffff;
+    border: 1px solid #e8efeb;
+    box-shadow: 0 8px 24px rgba(15, 23, 42, 0.05);
+}
+
+@media (max-width: 991.98px) {
+    .fh-header-search {
+        max-width: 100%;
+        margin: 0.75rem 0;
+    }
+
+    .fh-nav-pills {
+        flex-direction: column;
+        align-items: stretch;
+        padding-top: 0.5rem;
+    }
+
+    .fh-nav-link {
+        border-radius: 0.75rem;
+    }
+}

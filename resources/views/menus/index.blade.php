@@ -78,7 +78,13 @@
                     <div class="card-body p-4 d-flex flex-column">
                         <div class="small text-muted mb-1 d-flex align-items-center gap-1">
                             <i class="bi bi-shop text-primary"></i>
-                            <span class="text-truncate">{{ $menu->restaurant->name ?? 'FoodHub Kitchen' }}</span>
+                            @if($menu->restaurant)
+                                <a href="{{ route('restaurants.show', $menu->restaurant->slug) }}" class="text-muted text-decoration-none text-truncate">
+                                    {{ $menu->restaurant->name }}
+                                </a>
+                            @else
+                                <span class="text-truncate">FoodHub Kitchen</span>
+                            @endif
                         </div>
                         <h5 class="fw-bold text-dark text-truncate mb-2">
                             <a href="{{ route('menus.show', $menu) }}" class="text-dark text-decoration-none hover-primary">

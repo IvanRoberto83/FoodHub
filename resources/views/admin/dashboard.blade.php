@@ -1,29 +1,123 @@
-@extends('layouts.app')
+@extends('layouts.admin')
 
-@section('title', 'Dashboard Admin')
+@section('title', 'Dashboard Ringkasan Admin')
 
 @section('content')
-<div class="container-fluid">
-    <div class="row">
+<div class="mb-4">
+    <h3 class="fw-bold text-dark mb-1">Dashboard Ringkasan</h3>
+    <p class="text-muted small">Ringkasan statistik operasional FoodHub saat ini.</p>
+</div>
 
-        {{-- Sidebar --}}
-        <aside class="col-md-3 col-lg-2 bg-white border-end p-3" style="min-height: 75vh;">
-            <div class="list-group list-group-flush">
-                <a href="{{ route('admin.dashboard') }}" class="list-group-item list-group-item-action active">
-                    <i class="bi bi-speedometer2"></i> Dashboard
-                </a>
-                <span class="list-group-item text-muted"><i class="bi bi-people"></i> Pengguna</span>
-                <span class="list-group-item text-muted"><i class="bi bi-shop"></i> Restoran</span>
-                <span class="list-group-item text-muted"><i class="bi bi-tags"></i> Kategori</span>
-                <span class="list-group-item text-muted"><i class="bi bi-receipt"></i> Transaksi</span>
+{{-- 4 Kartu Statistik Cepat --}}
+<div class="row g-3 mb-4">
+    {{-- Total Kategori --}}
+    <div class="col-12 col-sm-6 col-xl-3">
+        <div class="card border-0 shadow-sm rounded-4 p-3 bg-white">
+            <div class="d-flex align-items-center gap-3">
+                <div class="bg-primary bg-opacity-10 text-primary p-3 rounded-4 fs-3">
+                    <i class="bi bi-tags"></i>
+                </div>
+                <div>
+                    <span class="text-muted small fw-semibold">Total Kategori</span>
+                    <h3 class="fw-bolder text-dark mb-0">{{ $totalCategories }}</h3>
+                </div>
             </div>
-        </aside>
+        </div>
+    </div>
 
-        {{-- Konten --}}
-        <section class="col-md-9 col-lg-10 p-4">
-            <h3 class="fw-bold">Dashboard Admin</h3>
-            <p class="text-muted">Selamat datang, {{ Auth::user()->name }}. Menu akan diaktifkan di Stage 9.</p>
-        </section>
+    {{-- Total Menu --}}
+    <div class="col-12 col-sm-6 col-xl-3">
+        <div class="card border-0 shadow-sm rounded-4 p-3 bg-white">
+            <div class="d-flex align-items-center gap-3">
+                <div class="bg-info bg-opacity-10 text-info p-3 rounded-4 fs-3">
+                    <i class="bi bi-cup-hot"></i>
+                </div>
+                <div>
+                    <span class="text-muted small fw-semibold">Total Menu</span>
+                    <h3 class="fw-bolder text-dark mb-0">{{ $totalMenus }}</h3>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    {{-- Pesanan Hari Ini --}}
+    <div class="col-12 col-sm-6 col-xl-3">
+        <div class="card border-0 shadow-sm rounded-4 p-3 bg-white">
+            <div class="d-flex align-items-center gap-3">
+                <div class="bg-warning bg-opacity-10 text-warning p-3 rounded-4 fs-3">
+                    <i class="bi bi-bag-check"></i>
+                </div>
+                <div>
+                    <span class="text-muted small fw-semibold">Pesanan Hari Ini</span>
+                    <h3 class="fw-bolder text-dark mb-0">{{ $todayOrdersCount }}</h3>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    {{-- Total Pendapatan --}}
+    <div class="col-12 col-sm-6 col-xl-3">
+        <div class="card border-0 shadow-sm rounded-4 p-3 bg-white">
+            <div class="d-flex align-items-center gap-3">
+                <div class="bg-success bg-opacity-10 text-success p-3 rounded-4 fs-3">
+                    <i class="bi bi-cash-coin"></i>
+                </div>
+                <div>
+                    <span class="text-muted small fw-semibold">Total Pendapatan</span>
+                    <h4 class="fw-bolder text-success mb-0">Rp {{ number_format($totalRevenue, 0, ',', '.') }}</h4>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{{-- Tabel Transaksi Terkini --}}
+<div class="card border-0 shadow-sm rounded-4 overflow-hidden">
+    <div class="card-header bg-white py-3 px-4 d-flex justify-content-between align-items-center">
+        <h5 class="fw-bold text-dark mb-0">Pesanan Masuk Terkini</h5>
+        <a href="{{ route('admin.orders.index') }}" class="btn btn-sm btn-outline-primary rounded-pill px-3">
+            Lihat Semua Pesanan
+        </a>
+    </div>
+    <div class="table-responsive">
+        <table class="table align-middle mb-0 table-hover">
+            <thead class="table-light small text-uppercase text-secondary">
+                <tr>
+                    <th class="ps-4">Kode Order</th>
+                    <th>Pelanggan</th>
+                    <th>Total</th>
+                    <th>Status</th>
+                    <th class="pe-4 text-end">Waktu</th>
+                </tr>
+            </thead>
+            <tbody>
+                @forelse($recentOrders as $order)
+                    <tr>
+                        <td class="ps-4 fw-bold text-dark">{{ $order->order_code }}</td>
+                        <td>{{ $order->customer->name ?? 'Guest' }}</td>
+                        <td class="fw-semibold text-primary">Rp {{ number_format($order->total_price, 0, ',', '.') }}</td>
+                        <td>
+                            @php
+                                $statusClasses = [
+                                    'pending'    => 'bg-warning text-dark',
+                                    'processing' => 'bg-info text-white',
+                                    'completed'  => 'bg-success text-white',
+                                    'cancelled'  => 'bg-danger text-white',
+                                ];
+                            @endphp
+                            <span class="badge {{ $statusClasses[$order->status] ?? 'bg-secondary' }} rounded-pill px-2 py-1">
+                                {{ ucfirst($order->status) }}
+                            </span>
+                        </td>
+                        <td class="pe-4 text-end text-muted small">{{ $order->created_at->diffForHumans() }}</td>
+                    </tr>
+                @empty
+                    <tr>
+                        <td colspan="5" class="text-center py-4 text-muted">Belum ada transaksi.</td>
+                    </tr>
+                @endforelse
+            </tbody>
+        </table>
     </div>
 </div>
 @endsection

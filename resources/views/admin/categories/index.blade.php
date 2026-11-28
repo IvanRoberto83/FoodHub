@@ -59,14 +59,17 @@
                             <x-confirm-modal
                                 id="delete-category-{{ $cat->id }}"
                                 title="Hapus Kategori?"
-                                message="Apakah Anda yakin ingin menghapus kategori <strong>{{ $cat->name }}</strong>? Kategori yang memiliki menu tidak dapat dihapus."
                                 confirm-text="Ya, Hapus"
                                 confirm-class="btn-danger"
                                 form-action="{{ route('admin.categories.destroy', $cat) }}"
                                 method="DELETE"
                                 icon="bi-trash-fill"
                                 icon-class="text-danger"
-                            />
+                                >
+                                <p>Apakah Anda yakin ingin menghapus kategori <strong>{{ $cat->name }}</strong>? Data menu yang terkait tidak akan terhapus.</p>
+                            </x-confirm-modal>
+                        </td>
+                    </tr>
                         </td>
                     </tr>
 
@@ -87,8 +90,16 @@
                                             <input type="text" name="name" class="form-control rounded-3" value="{{ $cat->name }}" required>
                                         </div>
                                         <div class="mb-3">
-                                            <label class="form-label fw-semibold">URL Gambar (Opsional)</label>
-                                            <input type="url" name="image" class="form-control rounded-3" value="{{ $cat->image }}">
+                                            <label class="form-label fw-semibold">Ubah Foto Kategori</label>
+                                            <div class="mb-2">
+                                                <label class="form-label fw-semibold small text-muted mb-1">Foto Saat Ini</label><br>
+                                                <img src="{{ $cat->image }}" id="currentImage" alt="{{ $cat->name }}" class="rounded-3 shadow-sm border" style="height: 140px; object-fit: cover;">
+                                            </div>
+                                            <label class="form-label fw-semibold small text-muted">Ganti Foto Baru (Opsional)</label>
+                                            <input type="file" name="image" id="menuImageInput" class="form-control rounded-3 @error('image') is-invalid @enderror" accept="image/*">
+                                            @error('image')
+                                                <div class="invalid-feedback">{{ $message }}</div>
+                                            @enderror
                                         </div>
                                     </div>
                                     <div class="modal-footer border-0 pt-0">
@@ -133,8 +144,16 @@
                         <input type="text" name="name" class="form-control rounded-3" placeholder="Contoh: Aneka Jus, Seafood..." required>
                     </div>
                     <div class="mb-3">
-                        <label class="form-label fw-semibold">URL Gambar (Opsional)</label>
-                        <input type="url" name="image" class="form-control rounded-3" placeholder="https://example.com/image.jpg">
+                        <label class="form-label fw-semibold">Foto Kategori</label>
+                        <div class="mb-2">
+                            <label class="form-label fw-semibold small text-muted mb-1">Foto Saat Ini</label><br>
+                            <img src="https://picsum.photos/seed/default/100/100" id="currentImage" alt="Default Image" class="rounded-3 shadow-sm border" style="height: 140px; object-fit: cover;">
+                            <label class="form-label fw-semibold small text-muted d-block mt-1">Foto default akan digunakan jika tidak diunggah.</label>
+                            <input type="file" name="image" id="menuImageInput" class="form-control rounded-3 @error('image') is-invalid @enderror" accept="image/*">
+                            @error('image')
+                                <div class="invalid-feedback">{{ $message }}</div>
+                            @enderror
+                        </div>
                     </div>
                 </div>
                 <div class="modal-footer border-0 pt-0">

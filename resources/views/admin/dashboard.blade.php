@@ -3,8 +3,8 @@
 @section('title', 'Dashboard Ringkasan Admin')
 
 @section('content')
-<div class="mb-4">
-    <h3 class="fw-bold text-dark mb-1">Dashboard Ringkasan</h3>
+<div class="admin-page-heading">
+    <h1 class="fw-bold mb-1">Dashboard Administrator</h1>
     <p class="text-muted small">Ringkasan statistik operasional FoodHub saat ini.</p>
 </div>
 
@@ -12,9 +12,9 @@
 <div class="row g-3 mb-4">
     {{-- Total Kategori --}}
     <div class="col-12 col-sm-6 col-xl-3">
-        <div class="card border-0 shadow-sm rounded-4 p-3 bg-white">
+        <div class="card admin-stat-card p-3">
             <div class="d-flex align-items-center gap-3">
-                <div class="bg-primary bg-opacity-10 text-primary p-3 rounded-4 fs-3">
+                <div class="admin-stat-icon bg-primary bg-opacity-10 text-primary fs-3">
                     <i class="bi bi-tags"></i>
                 </div>
                 <div>
@@ -27,9 +27,9 @@
 
     {{-- Total Menu --}}
     <div class="col-12 col-sm-6 col-xl-3">
-        <div class="card border-0 shadow-sm rounded-4 p-3 bg-white">
+        <div class="card admin-stat-card p-3">
             <div class="d-flex align-items-center gap-3">
-                <div class="bg-info bg-opacity-10 text-info p-3 rounded-4 fs-3">
+                <div class="admin-stat-icon bg-info bg-opacity-10 text-info fs-3">
                     <i class="bi bi-cup-hot"></i>
                 </div>
                 <div>
@@ -42,9 +42,9 @@
 
     {{-- Pesanan Hari Ini --}}
     <div class="col-12 col-sm-6 col-xl-3">
-        <div class="card border-0 shadow-sm rounded-4 p-3 bg-white">
+        <div class="card admin-stat-card p-3">
             <div class="d-flex align-items-center gap-3">
-                <div class="bg-warning bg-opacity-10 text-warning p-3 rounded-4 fs-3">
+                <div class="admin-stat-icon bg-warning bg-opacity-10 text-warning fs-3">
                     <i class="bi bi-bag-check"></i>
                 </div>
                 <div>
@@ -57,9 +57,9 @@
 
     {{-- Total Pendapatan --}}
     <div class="col-12 col-sm-6 col-xl-3">
-        <div class="card border-0 shadow-sm rounded-4 p-3 bg-white">
+        <div class="card admin-stat-card p-3">
             <div class="d-flex align-items-center gap-3">
-                <div class="bg-success bg-opacity-10 text-success p-3 rounded-4 fs-3">
+                <div class="admin-stat-icon bg-success bg-opacity-10 text-success fs-3">
                     <i class="bi bi-cash-coin"></i>
                 </div>
                 <div>
@@ -72,7 +72,7 @@
 </div>
 
 {{-- Tabel Transaksi Terkini --}}
-<div class="card border-0 shadow-sm rounded-4 overflow-hidden">
+<div class="card admin-table-card overflow-hidden">
     <div class="card-header bg-white py-3 px-4 d-flex justify-content-between align-items-center">
         <h5 class="fw-bold text-dark mb-0">Pesanan Masuk Terkini</h5>
         <a href="{{ route('admin.orders.index') }}" class="btn btn-sm btn-outline-primary rounded-pill px-3">
